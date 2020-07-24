@@ -23,12 +23,14 @@ module.exports.createCard = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   if (validator.isMongoId(req.params.cardId)) {
-    Card.findByIdAndDelete(req.params.cardId)
+    Card.findOneAndDelete({ _id: req.params.cardId, owner: req.user._id })
       .orFail(() => new Error('Card not found'))
-      .then((card) => {
-        res.status(200).json({ data: card });
+      .then(() => {
+        res.status(200).json({ message: 'Card has been deleted' });
       })
-      .catch((err) => res.status(404).json({ message: err.message }));
+      .catch((err) => {
+        res.status(404).json({ message: err.message });
+      });
   } else {
     res.status(400).json({ message: 'User input error' });
   }

@@ -1,7 +1,7 @@
 {
-  "name": "project13",
+  "name": "project14",
   "version": "1.0.0",
-  "description": "mesto backend project13",
+  "description": "mesto backend project14",
   "main": "app.js",
   "scripts": {
     "dev": "nodemon app.js",

@@ -4,7 +4,7 @@ const Card = require('../models/card');
 module.exports.getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.status(200).json({ data: cards }))
-    .catch(() => res.status(500).json({ message: 'Произошла ошибка' }));
+    .catch(() => res.status(500).json({ message: 'Server error' }));
 };
 
 module.exports.createCard = (req, res) => {
@@ -16,7 +16,7 @@ module.exports.createCard = (req, res) => {
       if (err.name === 'ValidationError') {
         res.status(400).json({ message: err.message });
       } else {
-        res.status(500).json({ message: 'Произошла ошибка' });
+        res.status(500).json({ message: 'Server error' });
       }
     });
 };
@@ -24,13 +24,13 @@ module.exports.createCard = (req, res) => {
 module.exports.deleteCard = (req, res) => {
   if (validator.isMongoId(req.params.cardId)) {
     Card.findByIdAndDelete(req.params.cardId)
-      .orFail(() => new Error('Запрашиваемая карточка отсутствует'))
+      .orFail(() => new Error('Card not found'))
       .then((card) => {
         res.status(200).json({ data: card });
       })
       .catch((err) => res.status(404).json({ message: err.message }));
   } else {
-    res.status(400).json({ message: 'Ошибка пользовательского ввода id карточки' });
+    res.status(400).json({ message: 'User input error' });
   }
 };
 
@@ -41,11 +41,11 @@ module.exports.likeCard = (req, res) => {
       { $addToSet: { likes: req.user._id } },
       { new: true },
     )
-      .orFail(() => new Error('Запрашиваемая карточка отсутствует'))
+      .orFail(() => new Error('Card not found'))
       .then((card) => res.status(200).json({ data: card }))
       .catch((err) => res.status(404).json({ message: err.message }));
   } else {
-    res.status(400).json({ message: 'Ошибка пользовательского ввода id карточки' });
+    res.status(400).json({ message: 'User input error' });
   }
 };
 
@@ -56,10 +56,10 @@ module.exports.dislikeCard = (req, res) => {
       { $pull: { likes: req.user._id } },
       { new: true },
     )
-      .orFail(() => new Error('Запрашиваемая карточка отсутствует'))
+      .orFail(() => new Error('Card not found'))
       .then((card) => res.status(200).json({ data: card }))
       .catch((err) => res.status(404).json({ message: err.message }));
   } else {
-    res.status(400).json({ message: 'Ошибка пользовательского ввода id карточки' });
+    res.status(400).json({ message: 'User input error' });
   }
 };

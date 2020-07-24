@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const uniqueValidator = require('mongoose-unique-validator');
 const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
@@ -36,8 +37,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 8,
+    select: false,
   },
 });
+
+userSchema.plugin(uniqueValidator);
 
 userSchema.statics.findUserByCredentials = function checkUser(email, password) {
   return this.findOne({ email })
